@@ -13,6 +13,3 @@ python main_seald.py data/dnerf/lego --workspace dnerf-jumpingjackslayer5-1103-2
 
 python main_dnerf.py data/dnerf/standup --workspace exps/standup/layer8-t64-1206 --bound 1.0 --scale 0.8 --dt_gamma 0  --lr 5e-4 --lr_net 5e-4 -O --iters 300000
 
-
-# wrong results
-python main_dnerf.py data/dnerf/lego --workspace dnerf-legolayer16-400-1031-new --bound 1.0 --scale 0.8 --dt_gamma 0  --lr 5e-4 --lr_net 5e-4 -O --iters 800000 
