@@ -21,20 +21,22 @@ class NeRFNetwork(SealNeRFTeacherRenderer):
                  hidden_dim_color=64,
                  num_layers_bg=2,
                  hidden_dim_bg=64,
-                 num_layers_deform=8, # a deeper MLP is very necessary for performance.
+                 num_layers_deform=8, # a deeper MLP is very necessary for performance. However, bad results come up if it is too deep.
                  hidden_dim_deform=128,
                  bound=1,
                  **kwargs,
                  ):
         super().__init__(bound, **kwargs)
 
+
+        # The original implementation from Torch-NGP deviates from the D-NeRF paper. This is the modified version.
+        
         # deformation network
         self.num_layers_deform = num_layers_deform
         self.hidden_dim_deform = hidden_dim_deform
         self.encoder_deform, self.in_dim_deform = get_encoder(encoding_deform, multires=10)
         self.encoder_time, self.in_dim_time = get_encoder(encoding_time, input_dim=1, multires=6)
 
-        
         deform_net = []
         for l in range(num_layers_deform):
             if l == 0:
@@ -61,7 +63,7 @@ class NeRFNetwork(SealNeRFTeacherRenderer):
         sigma_net = []
         for l in range(num_layers):
             if l == 0:
-                in_dim = self.in_dim # concat everything
+                in_dim = self.in_dim # Matches the standard NeRF network
             else:
                 in_dim = hidden_dim
             
@@ -137,9 +139,10 @@ class NeRFNetwork(SealNeRFTeacherRenderer):
             if l != self.num_layers_deform - 1:
                 deform = F.relu(deform, inplace=True)
 
-        # TODO: Set deform = 0 instead of x unchanged
-        if t != 0:
-            x = x + deform
+       
+        # Set t==0 to the canonical space by forcing deformation as zeros
+        if t == 0:
+            deform = torch.zeros_like(x, device=x.device)
 
         # sigma
         x = self.encoder(x, bound=self.bound)

@@ -110,6 +110,7 @@ if __name__ == '__main__':
         # assert opt.patch_size > 16, "patch_size should > 16 to run LPIPS loss."
         assert opt.num_rays % (opt.patch_size ** 2) == 0, "patch_size ** 2 should be dividable by num_rays."
 
+    # For now only the SealDeRF.network is implemented
     if opt.basis:
         assert opt.cuda_ray, "Non-cuda-ray mode is temporarily broken with temporal basis mode"
         from SealDNeRF.network_basis import NeRFNetwork
@@ -152,6 +153,7 @@ if __name__ == '__main__':
 
         trainer = Trainer('ngp', opt, model, device=device, workspace=opt.workspace, criterion=criterion, fp16=opt.fp16, metrics=[PSNRMeter()], use_checkpoint=opt.ckpt)
 
+        # For now only the GUI version is implemented
         if opt.gui:
             gui = NeRFGUI(opt, trainer)
             gui.render()
@@ -178,6 +180,7 @@ if __name__ == '__main__':
         teacher_trainer = Trainer('ngp', opt, teacher_model, device=device, workspace=opt.teacher_workspace, optimizer=optimizer, criterion=criterion, ema_decay=0.95, fp16=opt.fp16, lr_scheduler=scheduler, scheduler_update_every_step=True, metrics=[PSNRMeter()], use_checkpoint=opt.ckpt, eval_interval=50)
         trainer = StudentTrainer('ngp', opt, model, teacher_model, device=device, workspace=opt.workspace, optimizer=optimizer, criterion=criterion, ema_decay=0.95, fp16=opt.fp16, lr_scheduler=scheduler, scheduler_update_every_step=True, metrics=[PSNRMeter()], use_checkpoint=opt.ckpt, eval_interval=50)
         
+        # For now only the GUI version is implemented
         if opt.gui:
             gui = NeRFGUI(opt, teacher_trainer, trainer, train_loader)
             gui.render()
