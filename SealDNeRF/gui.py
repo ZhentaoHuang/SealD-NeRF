@@ -126,9 +126,9 @@ class NeRFGUI:
         starter, ender = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
         starter.record()
 
-        #zhentao: 只有student model出现
+        # Only train the student model
         outputs = self.trainer.train_gui(self.time, self.train_loader, step=self.train_steps)
-        # self.trainer.print_character()
+        
         ender.record()
         torch.cuda.synchronize()
         t = starter.elapsed_time(ender)
@@ -217,15 +217,7 @@ class NeRFGUI:
             else:
                 return mix_brush(depth_img, self.brush_mask + [self.active_mask], self.brush_color)
     
-    # def get_mask_pos(self, cluster=True):
-    #     position = self.teacher_trainer.test_gui(
-    #             self.cam.pose, self.cam.intrinsics, self.W, self.H, self.bg_color, 1, 1, True)['pos']
-    #     if not cluster:
-    #         return position[self.brush_mask[:,:,0] > 0]
-    #     mask = self.brush_mask[:,:,0]
-    #     labeled, ncomponents = label(mask, np.ones((3, 3), dtype=np.uint8))
-    #     self.trainer.log(f"[INFO] {ncomponents} brush components found")
-    #     return [position[labeled == i+1] for i in range(ncomponents)]
+
     def get_mask_pos(self, cluster=True):
         position = self.trainer.test_gui(
                 self.cam.pose, self.cam.intrinsics, self.W, self.H, self.time, self.bg_color, 1, 1, True)['pos']
@@ -243,6 +235,7 @@ class NeRFGUI:
             starter, ender = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
             starter.record()
 
+            # trainer.test_gui is used to generate output from one pose
             outputs = self.render_trainer.test_gui(self.cam.pose, self.cam.intrinsics, self.W, self.H, self.time, self.bg_color, self.spp, self.downscale)
 
             ender.record()
@@ -257,11 +250,11 @@ class NeRFGUI:
                 if downscale > self.downscale * 1.2 or downscale < self.downscale * 0.8:
                     self.downscale = downscale
 
+            # Only if self.need_update is true, the gui will update
             if self.need_update:
                 self.render_buffer = self.prepare_buffer(outputs)
                 self.spp = 1
                 self.need_update = False
-                # print(self.need_update)
             else:
                 self.render_buffer = (self.render_buffer * self.spp + self.prepare_buffer(outputs)) / (self.spp + 1)
                 self.spp += 1
@@ -272,7 +265,9 @@ class NeRFGUI:
             dpg.set_value("_log_spp", self.spp)
             dpg.set_value("_texture", self.render_buffer)
 
-        
+
+
+    # User Interface section    
     def register_dpg(self):
 
         ### register texture 
@@ -810,6 +805,7 @@ class NeRFGUI:
             dx = app_data[1]
             dy = app_data[2]
 
+            # The camera will only rotate by dragging when it is in the preview mode.
             if self.state == STATE_BRUSH:
                 if not self.brushing:
                     # mx, my = self.brush_pos
