@@ -1,4 +1,5 @@
-# SealD-NeRF
+# SealD-NeRF (Upcoming)
+SealD-NeRF: Interactive Pixel-Level Editing for Dynamic Scenes by Neural Radiance Fields
 
 # Install
 ```
