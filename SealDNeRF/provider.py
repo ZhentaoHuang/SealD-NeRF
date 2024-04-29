@@ -233,7 +233,6 @@ class NeRFDataset:
                     image = cv2.resize(image, (self.W, self.H), interpolation=cv2.INTER_AREA)
                     
                 image = image.astype(np.float32) / 255 # [H, W, 3/4]
-                print("zhentao", self.H, self.W)
                 # frame time
                 if 'time' in f:
                     time = f['time']

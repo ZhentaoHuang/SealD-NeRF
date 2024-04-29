@@ -144,6 +144,8 @@ class NeRFNetwork(SealNeRFTeacherRenderer):
         if t == 0:
             deform = torch.zeros_like(x, device=x.device)
 
+        x = x + deform
+
         # sigma
         x = self.encoder(x, bound=self.bound)
         # h = torch.cat([x, enc_ori_x, enc_t], dim=1)

@@ -4,10 +4,10 @@ import torch.nn.functional as F
 
 from encoding import get_encoder
 from activation import trunc_exp
-from .renderer import NeRFRenderer
+from .renderer import SealNeRFTeacherRenderer
 
 
-class NeRFNetwork(NeRFRenderer):
+class NeRFNetwork(SealNeRFTeacherRenderer):
     def __init__(self,
                  encoding="tiledgrid",
                  encoding_dir="sphere_harmonics",
@@ -136,11 +136,10 @@ class NeRFNetwork(NeRFRenderer):
             deform = self.deform_net[l](deform)
             if l != self.num_layers_deform - 1:
                 deform = F.relu(deform, inplace=True)
-        # Set t==0 to the canonical space by forcing deformation as zeros
-        if t == 0:
-            deform = torch.zeros_like(x, device=x.device)
 
-        x = x + deform
+        # TODO: Set deform = 0 instead of x unchanged
+        if t != 0:
+            x = x + deform
 
         # sigma
         x = self.encoder(x, bound=self.bound)
