@@ -1,6 +1,6 @@
 # SealD-NeRF
 
-## Install
+# Install
 ```
 git clone --recursive https://github.com/ashawkey/torch-ngp.git
 cd torch-ngp
@@ -26,6 +26,12 @@ bash scripts/install_ext.sh
 cd raymarching
 python setup.py build_ext --inplace # build ext only, do not install (only can be used in the parent directory)
 pip install . # install to python path (you still need the raymarching/ folder, since this only install the built extension.)
+```
+
+# Usage
+### Train an NGP/TensoRF model following the instructions of torch-ngp#usage. For example:
+```
+python main_dnerf.py data/dnerf/jumpingjacks --workspace trial_dnerf_jumpingjacks -O --bound 1.0 --scale 0.8 --dt_gamma 0 
 ```
 
 https://github.com/windingwind/seal-3d
