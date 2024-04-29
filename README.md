@@ -30,9 +30,12 @@ pip install . # install to python path (you still need the raymarching/ folder, 
 ```
 
 # Usage
-### Train an NGP/TensoRF model following the instructions of torch-ngp#usage. For example:
+Train an NGP/TensoRF model following the instructions of torch-ngp#usage. For example:
 ```
 python main_dnerf.py data/dnerf/jumpingjacks --workspace trial_dnerf_jumpingjacks -O --bound 1.0 --scale 0.8 --dt_gamma 0 
+```
+```
+python main_seald.py data/dnerf/jumpingjacks --workspace trial_dnerf_jumpingjacks -O --bound 1.0 --scale 0.8 --dt_gamma 0 --gui --teacher_workspace trial_seald_jumping
 ```
 
 https://github.com/windingwind/seal-3d
